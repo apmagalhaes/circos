@@ -1,27 +1,8 @@
 #!/bin/bash
 
-if [ -n "$1" ] 
-then
-n=$1
-else
-n=01
-fi
-
-echo 
-echo "****************************************************************"
-echo "Creating test image $n."
-echo "For other tables, see samples/parse-table-X.conf and then use"
-echo ""
-echo "> makeimage X"
-echo ""
-echo "e.g. makeimage 02a"
-echo "****************************************************************"
-echo 
-echo
-
-echo "Parsing table and creating conf/data files in data/"
-cat samples/table-$n.txt | bin/parse-table -conf samples/parse-table-$n.conf | bin/make-conf -dir data
-echo "Drawing Circos image using etc/circos.conf and parsed files from data/"
-../../bin/circos -conf etc/circos.conf -outputfile table-$n.png | grep created
-
-
+echo "Parsing..."
+./bin/parse-table -conf etc/parse-table.conf -file tables/full-other.txt -segment_order=ascii,size_desc -placement_order=row,col -interpolate_type count -row_color_col -use_row_color_col -col_color_row -use_col_color_row -color_source row -transparency 1 -fade_transparency 0 -ribbon_layer_order=size_asc > data/parsed.txt
+echo "Generating conf..."
+cat data/parsed.txt | ./bin/make-conf -dir data
+echo "Drawing Circos..."
+../../bin/circos -conf etc/circos.conf | grep "created"
